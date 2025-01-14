@@ -43,12 +43,11 @@ st.sidebar.title("Navigation")
 menu = st.sidebar.radio("Go to", ["Home", "Academic Programs", "Faculty Directory", "Admissions Dashboard", "Event Calendar"])
 
 # Add Duke Divinity School Logo
-st.sidebar.image("https://divinity.duke.edu/sites/divinity.duke.edu/files/styles/hero_full/public/2021-03/div_homepage.jpg",https://divinity.duke.edu/themes/custom/divinity_2023/logo.svg, use_column_width=True)
+
 
 # Home Page
 if menu == "Home":
     st.title("Welcome to Duke Divinity School Insights 📘")
-    st.image("https://divinity.duke.edu/sites/divinity.duke.edu/files/duke_divinity_logo.png",https://divinity.duke.edu/themes/custom/divinity_2023/logo.svg, use_column_width=True)
     st.write(
         """
         This web application provides insights into academic programs, admissions trends, faculty information,
