@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import plotly.express as px
 
 # Set up the Streamlit app title and layout with Duke branding
 st.set_page_config(
@@ -11,9 +10,8 @@ st.set_page_config(
     layout="wide",
 )
 
-# Duke color palette
+# Apply Duke color palette for charts
 DUKE_BLUE = "#012169"
-LIGHT_BLUE = "#6CACE4"
 WHITE = "#FFFFFF"
 GRAY = "#A6A6A6"
 
@@ -40,22 +38,17 @@ event_data = pd.DataFrame({
                     "Workshop on navigating seminary life."],
 })
 
-admissions_data = pd.DataFrame({
-    "Year": [2021, 2022, 2023, 2024],
-    "Applications": [300, 350, 400, 450],
-    "Enrollments": [120, 130, 150, 160],
-    "Acceptance Rate (%)": [40.0, 37.1, 37.5, 35.6],
-})
-
-# Sidebar navigation with logo
-st.sidebar.image("https://divinity.duke.edu/sites/divinity.duke.edu/files/duke_divinity_logo.png", use_column_width=True)
+# Navigation sidebar
 st.sidebar.title("Navigation")
 menu = st.sidebar.radio("Go to", ["Home", "Academic Programs", "Faculty Directory", "Admissions Dashboard", "Event Calendar"])
+
+# Add Duke Divinity School Logo
+st.sidebar.image("https://divinity.duke.edu/sites/divinity.duke.edu/files/styles/hero_full/public/2021-03/div_homepage.jpg",https://divinity.duke.edu/themes/custom/divinity_2023/logo.svg, use_column_width=True)
 
 # Home Page
 if menu == "Home":
     st.title("Welcome to Duke Divinity School Insights 📘")
-    st.image("https://divinity.duke.edu/sites/divinity.duke.edu/files/styles/hero_full/public/2021-03/div_homepage.jpg", use_column_width=True)
+    st.image("https://divinity.duke.edu/sites/divinity.duke.edu/files/duke_divinity_logo.png",https://divinity.duke.edu/themes/custom/divinity_2023/logo.svg, use_column_width=True)
     st.write(
         """
         This web application provides insights into academic programs, admissions trends, faculty information,
@@ -63,70 +56,82 @@ if menu == "Home":
         """
     )
 
-    st.metric(label="Programs Offered", value="4")
-    st.metric(label="Faculty Members", value="25")
-    st.metric(label="Upcoming Events", value="3")
-
 # Academic Programs
 elif menu == "Academic Programs":
     st.title("Academic Programs Overview")
     st.write("Explore the degree programs offered at Duke Divinity School:")
-    st.table(programs_data)
+    st.table(programs_data.style.set_properties(**{
+        'background-color': DUKE_BLUE,
+        'color': WHITE,
+        'border-color': GRAY,
+    }))
 
     st.subheader("Program Cost Analysis")
-    fig = px.bar(
-        programs_data,
-        x="Program Name",
-        y="Tuition (USD)",
-        color="Program Name",
-        color_discrete_sequence=[DUKE_BLUE, LIGHT_BLUE, GRAY, WHITE],
-        title="Tuition Costs by Program",
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    fig, ax = plt.subplots()
+    sns.barplot(data=programs_data, x="Program Name", y="Tuition (USD)", palette=[DUKE_BLUE, GRAY], ax=ax)
+    ax.set_title("Tuition Costs by Program", fontsize=16, color=DUKE_BLUE)
+    ax.set_ylabel("Tuition (USD)", fontsize=12, color=DUKE_BLUE)
+    ax.set_xlabel("Program Name", fontsize=12, color=DUKE_BLUE)
+    st.pyplot(fig)
 
 # Faculty Directory
 elif menu == "Faculty Directory":
     st.title("Faculty Directory")
     st.write("Meet our distinguished faculty members:")
-    st.table(faculty_data)
+    st.table(faculty_data.style.set_properties(**{
+        'background-color': DUKE_BLUE,
+        'color': WHITE,
+        'border-color': GRAY,
+    }))
 
 # Admissions Dashboard
 elif menu == "Admissions Dashboard":
     st.title("Admissions Dashboard")
-    st.write("This dashboard provides insights into admissions data:")
+    st.write("This dashboard provides insights into admissions data (mock data for demo purposes):")
 
-    # Key Metrics
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Applications (2024)", "450", delta="50 from 2023")
-    col2.metric("Enrollments (2024)", "160", delta="10 from 2023")
-    col3.metric("Acceptance Rate", "35.6%", delta="-1.9%")
+    # Mock admissions data
+    admissions_data = pd.DataFrame({
+        "Year": [2021, 2022, 2023, 2024],
+        "Applications": [300, 350, 400, 450],
+        "Enrollments": [120, 130, 150, 160],
+        "Acceptance Rate (%)": [40.0, 37.1, 37.5, 35.6],
+    })
 
-    # Admissions Trends
-    st.subheader("Admissions Trends Over Time")
-    fig = px.line(
-        admissions_data,
-        x="Year",
-        y=["Applications", "Enrollments"],
-        markers=True,
-        title="Applications and Enrollments Over Time",
-        color_discrete_sequence=[DUKE_BLUE, LIGHT_BLUE],
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    # Show data table
+    st.subheader("Admissions Statistics")
+    st.table(admissions_data.style.set_properties(**{
+        'background-color': DUKE_BLUE,
+        'color': WHITE,
+        'border-color': GRAY,
+    }))
+
+    # Plot trends
+    st.subheader("Admissions Trends")
+    fig, ax = plt.subplots(figsize=(8, 5))
+    sns.lineplot(data=admissions_data, x="Year", y="Applications", marker="o", label="Applications", color=DUKE_BLUE, ax=ax)
+    sns.lineplot(data=admissions_data, x="Year", y="Enrollments", marker="o", label="Enrollments", color=GRAY, ax=ax)
+    ax.set_title("Admissions and Enrollment Trends", fontsize=16, color=DUKE_BLUE)
+    ax.set_ylabel("Number of Students", fontsize=12, color=DUKE_BLUE)
+    ax.set_xlabel("Year", fontsize=12, color=DUKE_BLUE)
+    ax.legend()
+    st.pyplot(fig)
 
 # Event Calendar
 elif menu == "Event Calendar":
     st.title("Event Calendar")
     st.write("Discover upcoming events at Duke Divinity School:")
-    st.table(event_data)
+    st.table(event_data.style.set_properties(**{
+        'background-color': DUKE_BLUE,
+        'color': WHITE,
+        'border-color': GRAY,
+    }))
 
     st.subheader("Event Locations")
-    fig = px.histogram(
-        event_data,
-        x="Location",
-        title="Event Count by Location",
-        color_discrete_sequence=[DUKE_BLUE],
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    fig, ax = plt.subplots()
+    sns.countplot(data=event_data, x="Location", palette=[DUKE_BLUE, GRAY], ax=ax)
+    ax.set_title("Number of Events by Location", fontsize=16, color=DUKE_BLUE)
+    ax.set_xlabel("Location", fontsize=12, color=DUKE_BLUE)
+    ax.set_ylabel("Count", fontsize=12, color=DUKE_BLUE)
+    st.pyplot(fig)
 
 st.sidebar.write("Developed for Duke Divinity School (Mock Data Prototype).")
-
